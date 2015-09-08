@@ -183,7 +183,6 @@ def get_parser():
 def main():
     cfg.CONF([], project='ceilometer')
     # Connect to the metering database
-    conn = storage.get_connection_from_config(cfg.CONF)
 
     args = get_parser().parse_args()
 
@@ -195,14 +194,6 @@ def main():
     root_logger = logging.getLogger('')
     root_logger.addHandler(console)
     root_logger.setLevel(logging.DEBUG)
-
-    # Find the user and/or project for a real resource
-    if not (args.user_id or args.project_id):
-        for r in conn.get_resources():
-            if r.resource_id == args.resource_id:
-                args.user_id = r.user_id
-                args.project_id = r.project_id
-                break
 
     # Compute the correct time span
     format = '%Y-%m-%dT%H:%M:%S'
@@ -228,8 +219,6 @@ def main():
     args.end = end
 
     args.resource_list = [str(uuid.uuid4()) for _ in xrange(100)]
-
-    record_test_data(conn=conn, **args.__dict__)
 
     return 0
 
