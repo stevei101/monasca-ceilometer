@@ -33,11 +33,10 @@ import uuid
 from oslo_config import cfg
 from oslo_utils import timeutils
 
-from ceilometer.publisher import utils
 from ceilometer import monasca_client
+from ceilometer.publisher import utils
 from ceilometer import sample
 from ceilometer import storage
-
 
 
 def make_test_data(name, meter_type, unit, volume, random_min,
