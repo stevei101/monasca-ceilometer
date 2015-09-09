@@ -144,6 +144,21 @@ def get_parser():
         help='Counter unit.',
     )
     parser.add_argument(
+        '--geolocation',
+        default=None,
+        help='Geolocation.',
+    )
+    parser.add_argument(
+        '--region',
+        default=None,
+        help='Region.',
+    )
+    parser.add_argument(
+        '--availability_zone',
+        default=None,
+        help='Availability zone.',
+    )
+    parser.add_argument(
         '--project',
         dest='project_id',
         help='Project id of owner.',

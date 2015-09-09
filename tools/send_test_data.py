@@ -83,19 +83,19 @@ def get_parser():
     )
     parser.add_argument(
         '--topic',
-        default='perfmetering'
+        default='notification.info'
     )
     parser.add_argument(
         '--samples-count',
         dest='samples_count',
         type=int,
-        default=1000
+        default=1
     )
     parser.add_argument(
         '--resources-count',
         dest='resources_count',
         type=int,
-        default=100
+        default=1
     )
     parser.add_argument(
         '--result-directory',
