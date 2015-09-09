@@ -128,6 +128,87 @@ def generate_data(rpc_client, make_data_args, samples_count,
 
 
 def get_parser():
+
+    """
+    # these are from make_test_data.py
+    parser = argparse.ArgumentParser(
+        description='generate metering data',
+    )
+    parser.add_argument(
+        '--interval',
+        default=10,
+        type=int,
+        help='The period between events, in minutes.',
+    )
+    parser.add_argument(
+        '--start',
+        default=31,
+        help='Number of days to be stepped back from now or date in the past ('
+             '"YYYY-MM-DDTHH:MM:SS" format) to define timestamps start range.',
+    )
+    parser.add_argument(
+        '--end',
+        type=int,
+        default=2,
+        help='Number of days to be stepped forward from now or date in the '
+             'future ("YYYY-MM-DDTHH:MM:SS" format) to define timestamps end '
+             'range.',
+    )
+    parser.add_argument(
+        '--type',
+        choices=('gauge', 'cumulative'),
+        default='gauge',
+        dest='meter_type',
+        help='Counter type.',
+    )
+    parser.add_argument(
+        '--unit',
+        default=None,
+        help='Counter unit.',
+    )
+    parser.add_argument(
+        '--project',
+        dest='project_id',
+        help='Project id of owner.',
+    )
+    parser.add_argument(
+        '--user',
+        dest='user_id',
+        help='User id of owner.',
+    )
+    parser.add_argument(
+        '--random_min',
+        help='The random min border of amount for added to given volume.',
+        type=int,
+        default=0,
+    )
+    parser.add_argument(
+        '--random_max',
+        help='The random max border of amount for added to given volume.',
+        type=int,
+        default=0,
+    )
+    parser.add_argument(
+        '--resource',
+        dest='resource_id',
+        help='The resource id for the meter data.',
+    )
+    parser.add_argument(
+        '--counter',
+        default='instance',
+        dest='name',
+        help='The counter name for the meter data.',
+    )
+    parser.add_argument(
+        '--volume',
+        help='The amount to attach to the meter.',
+        type=int,
+        default=1,
+    )
+    return parser
+
+    """
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--batch-size',
@@ -170,7 +251,7 @@ def get_parser():
 
 def main():
     args = get_parser().parse_known_args()[0]
-    make_data_args = make_test_data.get_parser().parse_known_args()[0]
+    # make_data_args = make_test_data.get_parser().parse_known_args()[0]
     rpc_client = get_rpc_client(args.config_file)
     result_dir = args.result_dir
     del args.config_file
