@@ -253,9 +253,9 @@ def main():
     args = get_parser().parse_known_args()[0]
     # make_data_args = make_test_data.get_parser().parse_known_args()[0]
     rpc_client = get_rpc_client(args.config_file)
-    result_dir = args.result_dir
+    # result_dir = args.result_dir
     del args.config_file
-    del args.result_dir
+    # del args.result_dir
 
     """
     resource_writes = generate_data(rpc_client, make_data_args,
