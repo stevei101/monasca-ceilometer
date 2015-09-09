@@ -35,7 +35,7 @@ from oslo_utils import timeutils
 
 from ceilometer import monasca_client
 from ceilometer.publisher import utils
-#from ceilometer import sample
+# from ceilometer import sample
 import sample
 
 
