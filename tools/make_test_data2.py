@@ -181,6 +181,7 @@ def get_parser():
 
 
 def main():
+    print(monasca_client.__name__)
     cfg.CONF([], project='ceilometer')
     # Connect to the metering database
 
