@@ -150,7 +150,7 @@ def get_parser():
     )
     parser.add_argument(
         '--region',
-        default=None,
+        default='RegionOne',
         help='Region.',
     )
     parser.add_argument(
