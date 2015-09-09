@@ -23,10 +23,13 @@ import json
 import random
 import uuid
 
-# import make_test_data_draft as make_test_data
+from oslo_config import cfg
 from oslo_context import context
+from oslo_utils import timeutils
 
 from ceilometer import messaging
+from ceilometer.publisher import utils
+from ceilometer import sample
 from ceilometer import service
 
 
@@ -130,6 +133,7 @@ def generate_data(rpc_client, make_data_args, samples_count,
 def get_parser():
 
     """
+    
     # these are from make_test_data.py
     parser = argparse.ArgumentParser(
         description='generate metering data',
@@ -206,7 +210,7 @@ def get_parser():
         default=1,
     )
     return parser
-
+    
     """
 
     parser = argparse.ArgumentParser()
@@ -236,6 +240,7 @@ def get_parser():
         type=int,
         default=1
     )
+
     """
     parser.add_argument(
         '--result-directory',
@@ -243,6 +248,7 @@ def get_parser():
         default='/tmp'
     )
     """
+
     return parser
 
 # we would not need to store files
