@@ -36,7 +36,7 @@ from oslo_utils import timeutils
 from ceilometer import monasca_client
 from ceilometer.publisher import utils
 from ceilometer import sample
-from ceilometer import storage
+# from ceilometer import storage
 
 
 def make_test_data(name, meter_type, unit, volume, random_min,
@@ -184,7 +184,7 @@ def get_parser():
 def main():
     cfg.CONF([], project='ceilometer')
     # Connect to the metering database
-    conn = storage.get_connection_from_config(cfg.CONF)
+    # conn = storage.get_connection_from_config(cfg.CONF)
 
     args = get_parser().parse_args()
 
@@ -197,6 +197,7 @@ def main():
     root_logger.addHandler(console)
     root_logger.setLevel(logging.DEBUG)
 
+    """
     # Find the user and/or project for a real resource
     if not (args.user_id or args.project_id):
         for r in conn.get_resources():
@@ -204,6 +205,7 @@ def main():
                 args.user_id = r.user_id
                 args.project_id = r.project_id
                 break
+    """
 
     # Compute the correct time span
     format = '%Y-%m-%dT%H:%M:%S'
