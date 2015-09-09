@@ -39,7 +39,8 @@ from ceilometer.publisher import utils
 import sample
 
 
-def make_test_data(name, meter_type, unit, volume, random_min,
+def make_test_data(name, meter_type, unit, geolocation, region,
+                   availability_zone, volume, random_min,
                    random_max, user_id, project_id, resource_id,
                    resource_list, start, end, interval,
                    resource_metadata=None, source='artificial'):
@@ -71,9 +72,9 @@ def make_test_data(name, meter_type, unit, volume, random_min,
         c = sample.Sample(name=name,
                           type=meter_type,
                           unit=unit,
-                          geolocation= geolocation,
+                          geolocation=geolocation,
                           region=region,
-                          availability_zone= availability_zone,
+                          availability_zone=availability_zone,
                           volume=total_volume,
                           user_id=user_id,
                           project_id=project_id,
