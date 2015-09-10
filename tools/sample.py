@@ -55,15 +55,13 @@ cfg.CONF.register_opts(OPTS)
 # Resource metadata: various metadata
 class Sample(object):
 
-    def __init__(self, name, type, unit, geolocation, region,
-                 availability_zone, volume, user_id, project_id,
+    def __init__(self, name, type, unit, region,
+                 volume, user_id, project_id,
                  resource_id, timestamp, resource_metadata, source=None):
         self.name = name
         self.type = type
         self.unit = unit
-        self.geolocation = geolocation
         self.region = region
-        self.availability_zone = availability_zone
         self.volume = volume
         self.user_id = user_id
         self.project_id = project_id
@@ -81,8 +79,7 @@ class Sample(object):
             self.name, self.volume, self.resource_id, self.timestamp)
 
     @classmethod
-    def from_notification(cls, name, type, volume, unit,
-                          geolocation, region, availability_zone,
+    def from_notification(cls, name, type, volume, unit, region,
                           user_id, project_id, resource_id,
                           message, source=None):
         metadata = copy.copy(message['payload'])
@@ -91,9 +88,7 @@ class Sample(object):
         return cls(name=name,
                    type=type,
                    volume=volume,
-                   geolocation=geolocation,
                    region=region,
-                   availability_zone=availability_zone,
                    unit=unit,
                    user_id=user_id,
                    project_id=project_id,
