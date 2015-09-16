@@ -3,8 +3,8 @@
     -
       runner:
         type: "constant"
-        times: 10
-        concurrency: 10
+        times: 20
+        concurrency: 1
       context:
         users:
           tenants: 1
@@ -14,8 +14,8 @@
     -
       runner:
         type: "constant"
-        times: 10
-        concurrency: 10
+        times: 20
+        concurrency: 1
       context:
         users:
           tenants: 1
