@@ -37,7 +37,7 @@ public_cloud() {
 for t in {1..5}
 do
     echo_date
-    private_cloud
+    public_cloud
     run_until
     echo_date
 done
