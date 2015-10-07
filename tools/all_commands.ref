@@ -1,0 +1,107 @@
+# ceilosca all commands
+
+# update apt and install git
+sudo apt-get update; sudo apt-get install git
+
+# clone the git repo
+git clone https://github.com/stackforge/monasca-ceilometer.git
+# git clone -b ten1 https://github.com/stevei101/monasca-ceilometer.git
+
+# deploy ceilosca
+cd monasca-ceilometer
+deployer/ceilosca.sh
+
+
+# upgrade influxdb
+wget http://influxdb.s3.amazonaws.com/influxdb_0.9.4.1_amd64.deb
+sudo service influxdb stop
+sudo dpkg -i influxdb_0.9.4.1_amd64.deb
+sudo service influxdb start
+
+
+# remove ceilometer-api auth
+sudo vim /etc/ceilometer/api_paste.ini
+# change
+[pipeline:main]
+pipeline = request_id authtoken api-server
+# to
+[pipeline:main]
+pipeline = request_id api-server
+
+ps aux|grep "ceilometer-api" # sudo kill pid
+nohup /usr/bin/python /usr/local/bin/ceilometer-api -d -v --log-dir=/var/log/ceilometer-api --config-file /etc/ceilometer/ceilometer.conf &
+ctrl-C
+sudo rm -f nohup.out
+
+
+# increase memory for the monasca-api
+
+sudo vim /etc/init/monasca-api.conf
+Change:
+
+exec /usr/bin/java -Dfile.encoding=UTF-8 –Xmx1g -cp /opt/monasca/monasca-api.jar:/opt/monasca/vertica/vertica_jdbc.jar monasca.api.MonApiApplication server /etc/monasca/api-config.yml
+To:
+
+exec /usr/bin/java -Dfile.encoding=UTF-8 -Xmx4g -cp /opt/monasca/monasca-api.jar:/opt/monasca/vertica/vertica_jdbc.jar monasca.api.MonApiApplication server /etc/monasca/api-config.yml
+
+# then
+sudo service monasca-api restart
+
+
+# increase memory for the monasca-persister
+sudo vim /etc/init/monasca-persister.conf
+
+Change:
+
+exec /usr/bin/java -Dfile.encoding=UTF-8 –Xmx1g -cp /opt/monasca/monasca-persister.jar:/opt/monasca/vertica/vertica_jdbc.jar monasca.persister.PersisterApplication server /etc/monasca/persister-config.yml
+
+To:
+
+exec /usr/bin/java -Dfile.encoding=UTF-8 -Xmx4g -cp /opt/monasca/monasca-persister.jar:/opt/monasca/vertica/vertica_jdbc.jar monasca.persister.PersisterApplication server /etc/monasca/persister-config.yml
+
+# then
+sudo service monasca-persister restart
+
+
+# create a new virtualenv, activate, setup load tool, and create load
+virtualenv sim
+source sim/bin/activate
+pip install oslo.messaging
+
+# nohup ./private or  ./public master ceillometer ... & 
+
+
+NOTES:
+
+
+# check the load
+curl -G 'http://localhost:8086/query' --data-urlencode 'db=mon' --data-urlencode 'q=SELECT count(value) FROM volume'
+# by time
+curl -G 'http://localhost:8086/query' --data-urlencode 'db=mon' --data-urlencode 'q=SELECT count(value) FROM volume GROUP BY time(5m)'
+curl -G 'http://localhost:8086/query' --data-urlencode 'db=mon' --data-urlencode 'q=SELECT count(value) FROM volume WHERE time < now() - 1d'
+
+
+
+# time ceilometer
+for i in {1..10}; do time ceilometer sample-list -m volume|wc -l; done
+
+
+# disable auth in ceilometer since the auth TOKEN is not working
+time curl --max-time 7200 http://localhost:8777/v2/meters/volume 1>/dev/null |wc -l
+
+# run out of space
+sudo du -a /var | sort -n -r | head -n 10
+# delete (huge) files at your own risk*
+sudo du -a /home/ubuntu | sort -n -r | head -n 10
+
+
+# query 2.0
+curl -X GET -H "Content-Type: application/json" -d '{"q": [{"field": "timestamp", "op": "ge", "value": "2015-09-24T13:34:17"},{"field": "timestamp", "op": "le", "value": "2015-09-25T13:34:17"}]}' http://localhost:8777/v2/meters/volume
+
+for i in {1..5}; do time curl --max-time 7200 http://localhost:8777/v2/meters/volume |wc -l; done
+
+nohup /usr/bin/python /usr/local/bin/ceilometer-api -d -v --log-dir=/var/log/ceilometer-api --config-file /etc/ceilometer/ceilometer.conf >/dev/null 2>&1
+
+curl -X GET -H "Content-Type: application/json" -d '{"q": [{"field": "project", "op": "eq", "value": "abcde12345"}]}' http://localhost:8777/v2/meters/volume
+
+curl -X GET -H "Content-Type: application/json" -d '{"q": [{"field": "project", "op": "eq", "value": "abcde12345"}]}' http://localhost:8777/v2/meters/volume?limit=10

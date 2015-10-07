@@ -1,0 +1,54 @@
+# ceilometer all commands
+
+# update apt and install git
+sudo apt-get update; sudo apt-get install git mongodb
+
+# clone devstack
+git clone -b stable/kilo https://github.com/openstack-dev/devstack.git
+
+# set CEILOMETER_BACKEND=mongodb
+# add workers for collector and notification
+git clone -b ten1 https://github.com/stevei101/monasca-ceilometer.git
+cp ~/monasca-ceilometer/deployer/devstack/lib/ceilometer.conf ~/devstack/lib/ceilometer
+cp ~/monasca-ceilometer/deployer/devstack/ceilometer_local.conf ~/devstack/local.conf
+
+# deploy devstack
+cd ~/devstack
+./stack.sh
+
+# remove ceilometer-api auth
+sudo vim /etc/ceilometer/api_paste.ini
+# change
+[pipeline:main]
+pipeline = request_id authtoken api-server
+# to
+[pipeline:main]
+pipeline = request_id api-server
+
+# create a new virtualenv, activate, setup load tool, and create load
+cd ~/monasca-ceilometer/tools
+virtualenv sim
+source sim/bin/activate
+pip install oslo.messaging
+
+# nohup ./private or  ./public master ceillometer ... & 
+
+
+# later:
+
+mongo
+
+> use ceilometer
+> show collections
+> db.meter.count()
+> db.resource.count()
+
+# monitor the notification queue
+sudo rabbitmqctl list_queues
+
+# check the load
+time ceilometer sample-list -m volume|wc -l
+
+#time ceilometer
+for i in {1..10}; do time ceilometer sample-list -m volume|wc -l; done
+
