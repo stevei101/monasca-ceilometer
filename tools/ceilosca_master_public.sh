@@ -36,7 +36,7 @@ public_cloud() {
 
 
 echo_date
-private_cloud
+public_cloud
 run_until
 echo_date
 
