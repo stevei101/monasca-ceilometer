@@ -1,4 +1,4 @@
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
 #
@@ -11,14 +11,17 @@
 #    under the License.
 
 import eventlet
+
 eventlet.monkey_patch()
 
 import argparse
 import datetime
 import logging
+import six
 import sys
 import threading
 import time
+import uuid
 
 from oslo_config import cfg
 import oslo_messaging as messaging
@@ -34,7 +37,7 @@ USAGE = """ Usage: ./simulator.py [-h] [--url URL] [-d DEBUG]\
 Usage example:
  python tools/ceilosca-message-simulator.py\
  --url rabbit://stackrabbit:secretrabbit@localhost/ notify-client\
- -m 100 -s nova -a create - project_id, -r resource_id -d load_date"""
+ -m 100 -s nova -a create -p tenant_abc -r resource_abc -d 2015-09-01"""
 
 
 class LoggingNoParsingFilter(logging.Filter):
@@ -160,42 +163,33 @@ def _rpc_cast(client, msg):
 
 
 def notifier(_id, transport, messages, wait_after_msg, timeout,
-             service, action, project_id, resource_id, load_date):
+             service, action, tenant_id, resource_id, specified_date):
     n1 = notify.Notifier(transport, topic="notifications").prepare(
         publisher_id='publisher-%d' % _id)
-    # msg = 0
     for i in range(0, messages):
-        # msg = 1 + msg
         ctxt = {}
-
         LOG.info("send msg")
         if service == 'nova':
             if action == 'create':
-                n1.info(ctxt, 'compute.instance.create',
-                        _instance_payload(project_id, resource_id, load_date))
+                n1.info(ctxt, 'compute.instance.create', _instance_payload(tenant_id, resource_id, specified_date))
             elif action == 'delete':
-                n1.info(ctxt, 'compute.instance.delete',
-                        _instance_payload(project_id, resource_id, load_date))
+                n1.info(ctxt, 'compute.instance.delete', _instance_payload(tenant_id, resource_id, specified_date))
             else:
                 LOG.exception('Action %s not create or delete' % (action))
                 break
         elif service == 'cinder':
             if action == 'create':
-                n1.info(ctxt, 'volume.create',
-                        _volume_payload(project_id, resource_id, load_date))
+                n1.info(ctxt, 'volume.create', _volume_payload(tenant_id, resource_id, specified_date))
             elif action == 'delete':
-                n1.info(ctxt, 'volume.delete',
-                        _volume_payload(project_id, resource_id, load_date))
+                n1.info(ctxt, 'volume.delete', _volume_payload(tenant_id, resource_id, specified_date))
             else:
                 LOG.exception('Action %s not create or delete' % (action))
                 break
         elif service == 'glance':
             if action == 'create':
-                n1.info(ctxt, 'image.upload',
-                        _image_payload(project_id, resource_id, load_date))
+                n1.info(ctxt, 'image.upload', _image_payload(tenant_id, resource_id, specified_date))
             elif action == 'delete':
-                n1.info(ctxt, 'image.delete',
-                        _image_payload(project_id, resource_id, load_date))
+                n1.info(ctxt, 'image.delete', _image_payload(tenant_id, resource_id, specified_date))
             else:
                 LOG.exception('Action %s not create or delete' % (action))
                 break
@@ -207,70 +201,73 @@ def notifier(_id, transport, messages, wait_after_msg, timeout,
             time.sleep(wait_after_msg)
 
 
-def _volume_payload(project_id, resource_id, load_date):
-    return {'user_id': u'abcd_01234_dcba',
-            'tenant_id': unicode(project_id),
-            'volume_id': unicode(resource_id),
-            'size': 1024,
-            'availablity_zone': u'nova',
-            'display_name': u'simulator',
-            'replication_status': u'disabled',
-            'status': u'active',
-            'created_at': load_date + str(timeutils.utcnow())[-15:-7]
-            }
+def _volume_payload(tenant_id, resource_id, specified_date):
+    return {
+        'user_id': u'abcde12345',
+        'tenant_id': u'tenant_id',
+        'volume_id': u'resource_id',
+        'size': 1024,
+        'availablity_zone': u'nova',
+        'display_name': u'simulator',
+        'replication_status': u'disabled',
+        'status': u'active',
+        'created_at': specified_date + str(timeutils.utcnow())[-15:-7]
+    }
 
 
-def _instance_payload(project_id, resource_id, load_date):
-    return {'created_at': load_date + str(timeutils.utcnow())[-15:-7],
-            'deleted_at': u'',
-            'disk_gb': 0,
-            'display_name': u'testme',
-            'fixed_ips': [{'address': u'10.0.0.2',
-                           'floating_ips': [],
-                           'meta': {},
-                            'type': u'fixed',
-                            'version': 4}],
-            'image_ref_url': u'http://10.0.2.15:9292/images/UUID',
-            'instance_id': unicode(resource_id),
-            'instance_type': u'm1.xlarge',
-            'instance_type_id': 2,
-            'launched_at': load_date + str(timeutils.utcnow())[-15:-7],
-            'memory_mb': 512,
-            'state': u'active',
-            'state_description': u'',
-            'tenant_id': unicode(project_id),
-            'user_id': u'abcd_01234_dcba',
-            'reservation_id': u'1e3ce043029547f1a61c1996d1a531a3',
-            'vcpus': 10,
-            'root_gb': 0,
-            'ephemeral_gb': 0,
-            'host': u'compute-host-name',
-            'availability_zone': u'1e3ce043029547f1a61c1996d1a531a4',
-            'os_type': u'linux?',
-            'architecture': u'x86',
-            'image_ref': u'UUID',
-            'kernel_id': u'1e3ce043029547f1a61c1996d1a531a5',
-            'ramdisk_id': u'1e3ce043029547f1a61c1996d1a531a6'
-            }
+def _instance_payload(tenant_id, resource_id, specified_date):
+    return {
+        'created_at': specified_date + str(timeutils.utcnow())[-15:-7],
+        'deleted_at': u'',
+        'disk_gb': 0,
+        'display_name': u'testme',
+        'fixed_ips': [{'address': u'10.0.0.2',
+                       'floating_ips': [],
+                       'meta': {},
+                       'type': u'fixed',
+                       'version': 4}],
+        'image_ref_url': u'http://10.0.2.15:9292/images/UUID',
+        'instance_id': u'resource_id',
+        'instance_type': u'm1.xlarge',
+        'instance_type_id': 2,
+        'launched_at': u'2012-05-08 20:23:47.985999',
+        'memory_mb': 512,
+        'state': u'active',
+        'state_description': u'',
+        'tenant_id': u'tenant_id',
+        'user_id': u'abcde12345',
+        'reservation_id': u'1e3ce043029547f1a61c1996d1a531a3',
+        'vcpus': 10,
+        'root_gb': 0,
+        'ephemeral_gb': 0,
+        'host': u'compute-host-name',
+        'availability_zone': u'1e3ce043029547f1a61c1996d1a531a4',
+        'os_type': u'linux?',
+        'architecture': u'x86',
+        'image_ref': u'UUID',
+        'kernel_id': u'1e3ce043029547f1a61c1996d1a531a5',
+        'ramdisk_id': u'1e3ce043029547f1a61c1996d1a531a6',
+    }
 
 
-def _image_payload(project_id, resource_id, load_date):
-    return {'id': unicode(resource_id),
-            'name': u'myImage',
-            'status': u'active',
-            'created_at': load_date + str(timeutils.utcnow())[-15:-7],
-            'updated_at': load_date + str(timeutils.utcnow())[-15:-7],
-            'min_disk': 100,
-            'min_ram': 4096,
-            'protected': u'',
-            'checksum': u'',
-            'owner': unicode(project_id),
-            'disk_format': u'',
-            'container_format': u'',
-            'size': 1000000,
-            'is_public': u'public',
-            'deleted_at': ''
-            }
+def _image_payload(tenant_id, resource_id, specified_date):
+    return {
+        'id': u'resource_id',
+        'name': u'myImage',
+        'status': u'active',
+        'created_at': specified_date + str(timeutils.utcnow())[-15:-7],
+        'updated_at': specified_date + str(timeutils.utcnow())[-15:-7],
+        'min_disk': 100,
+        'min_ram': 4096,
+        'protected': u'',
+        'checksum': u'',
+        'owner': u'tenant_id',
+        'disk_format': u'',
+        'container_format': u'',
+        'size': 1000000,
+        'is_public': u'public',
+        'deleted_at': '',
+    }
 
 
 def _setup_logging(is_debug):
@@ -278,7 +275,7 @@ def _setup_logging(is_debug):
     logging.basicConfig(stream=sys.stdout, level=log_level)
     logging.getLogger().handlers[0].addFilter(LoggingNoParsingFilter())
     for i in ['kombu', 'amqp', 'stevedore', 'qpid.messaging'
-              'oslo.messaging._drivers.amqp', ]:
+                                            'oslo.messaging._drivers.amqp', ]:
         logging.getLogger(i).setLevel(logging.WARN)
 
 
@@ -310,11 +307,11 @@ def main():
                         help='nova, cinder or glance')
     client.add_argument('-a', dest='action', default='create',
                         help='create or delete')
-    client.add_argument('-x', dest='project_id', default='tenant_abc',
-                        help='project_id')
+    client.add_argument('-x', dest='tenant_id', default='tenant_abc',
+                        help='tenant_id')
     client.add_argument('-r', dest='resource_id', default='resource_abc',
                         help='resource_id')
-    client.add_argument('-d', dest='load_date', default='2015-10-01',
+    client.add_argument('-d', dest='specified_date', default='2015-01-01',
                         help='date in format yyyy-mm-dd')
 
     server = subparsers.add_parser('rpc-server')
@@ -336,7 +333,7 @@ def main():
                         help='client timeout')
     client.add_argument('--exit-wait', dest='exit_wait', type=int, default=0,
                         help='Keep connections open N seconds after calls '
-                        'have been done')
+                             'have been done')
     client.add_argument('--is-cast', dest='is_cast', type=bool, default=False,
                         help='Use `call` or `cast` RPC methods')
 
@@ -363,8 +360,8 @@ def main():
     elif args.mode == 'notify-client':
         threads_spawner(args.threads, notifier, transport, args.messages,
                         args.wait_after_msg, args.timeout, args.service,
-                        args.project_id, args.resource_id, args.load_date,
-                        args.action)
+                        args.action, args.tenant_id, args.resource_id,
+                        args.specified_date)
     elif args.mode == 'rpc-client':
         start = datetime.datetime.now()
         threads_spawner(args.threads, send_msg, transport, target,
