@@ -9,7 +9,7 @@ run_until () {
     while [ "$OUTPUT" != 0 ]; do
         OUTPUT=`sudo rabbitmqctl list_queues|grep 'notifications.info'| awk '{print $2}'`;
         sleep 600s;
-     done
+    done
 }
 
 public_cloud() {
