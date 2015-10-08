@@ -102,4 +102,5 @@ disable_monasca_ui_role
 disable_monasca_events_installation
 add_to_etc_hosts
 add_monasca_ips_to_local_net_if
+run_ceilosca
 upgrade_influx
