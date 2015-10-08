@@ -1,0 +1,12 @@
+# upgrade_influx.yml
+---
+- hosts: all
+
+  tasks:
+
+    - name: download foo.conf
+      get_url: url=http://influxdb.s3.amazonaws.com/influxdb_0.9.4.1_amd64.deb dest=/tmp/influxdb_0.9.4.1_amd64.deb
+
+    - name: Install a .deb package
+      apt: deb=/tmp/influxdb_0.9.4.1_amd64.deb dpkg_options='force-confnew'
+      sudo: yes
