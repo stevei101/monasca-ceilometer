@@ -1,6 +1,6 @@
 #!/bin/bash
 
 cd ~/monasca-ceilometer/tools
-/usr/bin/local/virtualenv sim
+/usr/local/bin/virtualenv sim
 source sim/bin/activate
-/usr/bin/pip install oslo.messaging
+/usr/local/bin/pip install oslo.messaging
