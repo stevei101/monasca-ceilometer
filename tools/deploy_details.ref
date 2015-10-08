@@ -1,0 +1,28 @@
+ceilosca:
+[home folder]
+sudo apt-get update; sudo apt-get install git
+git clone -b influx https://github.com/stevei101/monasca-ceilometer.git
+cd ~/monasca-ceilometer
+deployer/ceilosca.sh 
+
+ - increase memory for mon api, persister
+ - virtualenv sim, pip install oslo.messaging
+
+cd ~/monasca-ceilometer/tools
+
+ - run script as: nohup ./script.sh > script.out 2>&1 &
+
+ceilometer:
+[home folder]
+sudo apt-get update; sudo apt-get install git mongodb
+git clone -b influx https://github.com/stevei101/monasca-ceilometer.git
+git clone -b workers https://github.com/stevei101/devstack.git
+cp ~/monasca-ceilometer/deployer/devstack/ceilometer_local.conf ~/devstack/local.conf
+cd ~/devstack
+./stack.sh
+
+ - virtualenv sim, pip install oslo.messaging
+
+cd ~/monasca-ceilometer/tools
+
+ - run script as: nohup ./script.sh > script.out 2>&1 &

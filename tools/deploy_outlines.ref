@@ -4,7 +4,7 @@ remove collector from local.conf [already patched fork 10/7/2015]
 
 deployer/ceilosca.sh 
 
-remove keystone auth from ceilometer-api
+remove keystone auth from ceilometer-api [already patched fork 10/8/2015]
 
 increase memory for mon api, persister
 
