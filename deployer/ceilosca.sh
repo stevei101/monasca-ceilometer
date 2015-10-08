@@ -89,6 +89,11 @@ run_ceilosca()
         ansible-playbook -u $CEILOSCA_USER -c local -k -i "mini-mon,"  mini-mon.yml -e 'database_type=influxdb'
 }
 
+upgrade_influx()
+{
+        ansible-playbook -u $CEILOSCA_USER -c local -k -i "mini-mon,"  upgrade_infux.yml
+}
+
 clear_env
 setup_devstack
 install_ansible
@@ -97,4 +102,4 @@ disable_monasca_ui_role
 disable_monasca_events_installation
 add_to_etc_hosts
 add_monasca_ips_to_local_net_if
-run_ceilosca
+upgrade_influx
