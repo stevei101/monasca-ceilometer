@@ -5,6 +5,7 @@ sudo apt-get update; sudo apt-get install git mongodb
 
 # clone devstack
 git clone -b stable/kilo https://github.com/openstack-dev/devstack.git
+# git clone -b workers https://github.com/stevei101/devstack.git
 
 # set CEILOMETER_BACKEND=mongodb
 # add workers for collector and notification
