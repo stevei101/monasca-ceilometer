@@ -7,7 +7,7 @@ sudo apt-get update; sudo apt-get install git
 git clone https://github.com/stackforge/monasca-ceilometer.git
 # disable collector for ceilometer
 # add cycle scripts
-# git clone -b ten1 https://github.com/stevei101/monasca-ceilometer.git
+# git clone -b influx https://github.com/stevei101/monasca-ceilometer.git
 
 # deploy ceilosca
 cd monasca-ceilometer
