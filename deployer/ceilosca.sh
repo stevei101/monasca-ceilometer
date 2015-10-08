@@ -91,7 +91,7 @@ run_ceilosca()
 
 upgrade_influx()
 {
-        ansible-playbook -u $CEILOSCA_USER -c local -k -i "mini-mon,"  upgrade_infux.yml
+        ansible-playbook -u $CEILOSCA_USER -c local -k -i "mini-mon,"  upgrade_influx.yml
 }
 
 clear_env
