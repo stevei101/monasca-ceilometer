@@ -1,0 +1,24 @@
+ceilosca:
+
+remove collector from local.conf [already patched fork 10/7/2015]
+
+deployer/ceilosca.sh 
+
+remove keystone auth from ceilometer-api
+
+increase memory for mon api, persister
+
+upgrade influxdb to 9.4.1 [added script to fork 10/7/2015]
+
+virtualenv sim, pip install oslo.messaging
+
+
+ceilometer:
+
+use lib/ceilometer patch for collector notification workers in devstack [added patch to fork 10/7/2015]
+
+./stack.sh
+
+remove keystone auth from ceilo-api
+
+virtualenv sim, pip install oslo.messaging

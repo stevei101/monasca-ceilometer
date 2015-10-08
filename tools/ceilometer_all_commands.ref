@@ -9,7 +9,7 @@ git clone -b stable/kilo https://github.com/openstack-dev/devstack.git
 # set CEILOMETER_BACKEND=mongodb
 # add workers for collector and notification
 git clone -b ten1 https://github.com/stevei101/monasca-ceilometer.git
-cp ~/monasca-ceilometer/deployer/devstack/lib/ceilometer.conf ~/devstack/lib/ceilometer
+cp ~/monasca-ceilometer/deployer/devstack/lib/ceilometer ~/devstack/lib/ceilometer
 cp ~/monasca-ceilometer/deployer/devstack/ceilometer_local.conf ~/devstack/local.conf
 
 # deploy devstack

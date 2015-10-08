@@ -5,6 +5,8 @@ sudo apt-get update; sudo apt-get install git
 
 # clone the git repo
 git clone https://github.com/stackforge/monasca-ceilometer.git
+# disable collector for ceilometer
+# add cycle scripts
 # git clone -b ten1 https://github.com/stevei101/monasca-ceilometer.git
 
 # deploy ceilosca
@@ -13,11 +15,7 @@ deployer/ceilosca.sh
 
 
 # upgrade influxdb
-wget http://influxdb.s3.amazonaws.com/influxdb_0.9.4.1_amd64.deb
-sudo service influxdb stop
-sudo dpkg -i influxdb_0.9.4.1_amd64.deb
-sudo service influxdb start
-
+tools/upgrade_influx941.sh
 
 # remove ceilometer-api auth
 sudo vim /etc/ceilometer/api_paste.ini
@@ -68,7 +66,8 @@ virtualenv sim
 source sim/bin/activate
 pip install oslo.messaging
 
-# nohup ./private or  ./public master ceillometer ... & 
+# nohup ./script.sh > script.out 2>&1 & 
+# tail -f script.out
 
 
 NOTES:
