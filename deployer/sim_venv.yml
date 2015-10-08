@@ -1,0 +1,14 @@
+# sim_venv.yml
+---
+- hosts: all
+
+  tasks:
+
+    - name: setup virtual env
+      command: /usr/local/bin/virtualenv sim creates=sim
+
+    - name: install requirements
+      shell: source sim/bin/activate
+
+    - name: Install (oslo.messaging) python package.
+      pip: name=oslo.messaging

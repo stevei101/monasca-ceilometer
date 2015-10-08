@@ -1,0 +1,11 @@
+# sim_venv.yml
+---
+- hosts: all
+
+  tasks:
+
+    - name: setup virtual env and install oslo.messaging
+      pip: name=oslo.messaging virtualenv=sim
+
+    - name: activate venv 
+      shell: source sim/bin/activate
