@@ -1,7 +1,7 @@
 ---
 sources:
     - name: meter_source
-      interval: 60
+      interval: 3600
       meters:
           - "*"
       sinks:
