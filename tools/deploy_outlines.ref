@@ -17,10 +17,10 @@ ceilometer:
 
 use lib/ceilometer patch for collector notification workers in devstack [added patch to fork 10/7/2015]
 
-change ceilometer pipeline
+change ceilometer pipeline [included in patch above]
 
 ./stack.sh
 
-remove keystone auth from ceilo-api
+remove keystone auth from ceilo-api [included in patch above]
 
 virtualenv sim, pip install oslo.messaging
