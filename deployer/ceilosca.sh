@@ -37,15 +37,15 @@ setup_devstack()
 
 install_ansible()
 {
-	      sudo apt-get install software-properties-common
-	      sudo apt-add-repository -y ppa:ansible/ansible
-	      sudo apt-get update
-	      sudo apt-get -y install ansible
+        sudo apt-get install software-properties-common
+        sudo apt-add-repository -y ppa:ansible/ansible
+        sudo apt-get update
+        sudo apt-get -y install ansible
 }
 
 get_monasca_files()
 {
-	      git clone $MONASCA_VAGRANT_REPO $WORK_DIR || true
+        git clone $MONASCA_VAGRANT_REPO $WORK_DIR || true
         pushd $WORK_DIR
         ansible-galaxy install -r requirements.yml -p ./roles --ignore-errors
         popd
@@ -85,13 +85,13 @@ add_monasca_ips_to_local_net_if()
 run_ceilosca()
 {
         cd $WORK_DIR
-        ansible-playbook -u $CEILOSCA_USER -c local -k -i "devstack,"  devstack.yml
-        ansible-playbook -u $CEILOSCA_USER -c local -k -i "mini-mon,"  mini-mon.yml -e 'database_type=influxdb'
+        ansible-playbook -u $CEILOSCA_USER -c local -k -i "devstack," devstack.yml
+        ansible-playbook -u $CEILOSCA_USER -c local -k -i "mini-mon," mini-mon.yml -e 'database_type=influxdb'
 }
 
 upgrade_influx()
 {
-        ansible-playbook -u $CEILOSCA_USER -c local -k -i "mini-mon,"  upgrade_influx.yml
+        ansible-playbook -u $CEILOSCA_USER -c local -k -i "mini-mon," upgrade_influx.yml
 }
 
 clear_env
