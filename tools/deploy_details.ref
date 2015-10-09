@@ -6,11 +6,11 @@ cd ~/monasca-ceilometer
 deployer/ceilosca.sh 
 
  - increase memory for mon api, persister
- - virtualenv sim, pip install oslo.messaging
 
 cd ~/monasca-ceilometer/tools
-
- - run script as: nohup ./script.sh > script.out 2>&1 &
+../sim_venv.sh
+source sim/bin/activate
+ - in the (sim) venv run script as: nohup ./script.sh > script.out 2>&1 &
 
 ceilometer:
 [home folder]
@@ -21,8 +21,7 @@ cp ~/monasca-ceilometer/deployer/devstack/ceilometer_local.conf ~/devstack/local
 cd ~/devstack
 ./stack.sh
 
- - virtualenv sim, pip install oslo.messaging
-
 cd ~/monasca-ceilometer/tools
-
- - run script as: nohup ./script.sh > script.out 2>&1 &
+../sim_venv.sh
+source sim/bin/activate
+ - in the (sim) venv run script as: nohup ./script.sh > script.out 2>&1 &
