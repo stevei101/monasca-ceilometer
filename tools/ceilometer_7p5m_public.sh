@@ -32,7 +32,7 @@ public_cloud() {
     done
 }
 
-for t in {1..104}
+for t in {1..25}
 do
     echo_date
     public_cloud
