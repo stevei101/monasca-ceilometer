@@ -12,6 +12,7 @@ cd ~/monasca-ceilometer/tools
 source sim/bin/activate
  - in the (sim) venv run script as: nohup ./script.sh > script.out 2>&1 &
 
+
 ceilometer:
 [home folder]
 sudo apt-get update; sudo apt-get install git mongodb
