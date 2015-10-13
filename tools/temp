@@ -1,0 +1,34 @@
+
+
+curl -g -i -X 'GET' 'http://10.0.2.15:8777/v2/meters/instance?q.field=project_id&q.field=timestamp&q.field=timestamp&q.op=eq&q.op=ge&q.op=le&q.type=&q.type=&q.type=&q.value=4db7f16edd2b4df98fcecdd693f0c03f&q.value=2015-09-01T00%3A00%3A00&q.value=2015-09-01T23%3A59%3A59'
+
+# draft
+curl -g -i -X 'GET' 'http://10.0.2.15:8777/v2/meters/image?q.field=project_id&q.field=timestamp&q.field=timestamp&q.op=eq&q.op=ge&q.op=le&q.type=&q.type=&q.type=&q.value=4db7f16edd2b4df98fcecdd693f0c03f&q.value=2015-09-01T00%3A00%3A00&q.value=2015-09-01T23%3A59%3A59'
+
+# draft
+curl -g -i -X 'GET' 'http://10.0.2.15:8777/v2/meters/volume?q.field=project_id&q.field=timestamp&q.field=timestamp&q.op=eq&q.op=ge&q.op=le&q.type=&q.type=&q.type=&q.value=4db7f16edd2b4df98fcecdd693f0c03f&q.value=2015-09-01T00%3A00%3A00&q.value=2015-09-01T23%3A59%3A59'
+
+
+ceilosca_7p5m_public.out
+nohup: ignoring input
+Mon Oct 12 18:11:30 UTC 2015
+ERROR:oslo.messaging._drivers.impl_rabbit:The broker has blocked the connection: low on disk
+ERROR:oslo.messaging._drivers.impl_rabbit:The broker has blocked the connection: low on disk
+ERROR:oslo.messaging._drivers.impl_rabbit:The broker has blocked the connection: low on disk
+ERROR:oslo.messaging._drivers.impl_rabbit:The broker has blocked the connection: low on disk
+ERROR:oslo.messaging._drivers.impl_rabbit:The broker has blocked the connection: low on disk
+Tue Oct 13 00:15:06 UTC 2015
+
+# run q 10x
+for t in {1..10}; do time curl --max-time 7200 'http://10.0.2.15:8777/v2/meters/instance?q.field=project_id&q.field=timestamp&q.field=timestamp&q.op=eq&q.op=ge&q.op=le&q.type=&q.type=&q.type=&q.value=001_tenant_abcdefgh&q.value=2015-10-13T00%3A00%3A00&q.value=2015-09-13T23%3A59%3A59' 1>/dev/null; done
+
+
+
+curl --max-time 7200 'http://10.0.2.15:8777/v2/meters/instance?q.field=project_id&q.field=timestamp&q.field=timestamp&q.op=eq&q.op=ge&q.op=le&q.type=&q.type=&q.type=&q.value=001_tenant_abcdefgh&q.value=2015-10-13T00%3A00%3A00&q.value=2015-09-13T23%3A59%3A59'
+
+
+ - public only has instance and volume [we cannot do 500 ] choose tenants 1 to 5 and do two calls ten times
+
+ - private has all three types [5 tenants x3 calls simulataneously]  i.e. write a small script and run it 10 times for all the 5 tenants 001 002..
+
+ we need to run 10 queries 10 time sand record the times
