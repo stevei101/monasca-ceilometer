@@ -15,13 +15,20 @@ run_until () {
 private_cloud() {
     /bin/bash tquery_instance.sh &
     pid0=$!
+    # If this script is killed, kill query.
+    trap "kill $pid0" EXIT
     /bin/bash tquery_instance.sh &
     pid1=$!
+    # If this script is killed, kill query.
+    trap "kill $pid1" EXIT
     /bin/bash tquery_instance.sh &
     pid2=$!
+    # If this script is killed, kill query.
+    trap "kill $pid2" EXIT
 }
 
 echo_date
 private_cloud
 run_until
 echo_date
+trap - EXIT
