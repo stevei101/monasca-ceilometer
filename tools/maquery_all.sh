@@ -3,9 +3,9 @@
 # all queries
 
 private_cloud() {
-    /bin/bash tquery_instance.sh > tquery_instance.out &
-    /bin/bash tquery_image.sh > tquery_image.out &
-    /bin/bash tquery_volume.sh > tquery_volume.out &
+    nohup /bin/bash tquery_instance.sh > tquery_instance.out 2>&1 &
+    nohup /bin/bash tquery_image.sh > tquery_image.out 2>&1 &
+    nohup /bin/bash tquery_volume.sh > tquery_volume.out 2>&1 &
 }
 
 private_cloud
