@@ -5,8 +5,14 @@ echo_date () {
 }
 
 # all query
+
+do_queries () {
+    ./query_instance.sh &
+    ./query_image.sh &
+    ./query_volume.sh &
+}
+
+
 echo_date
-./query_instance.sh &
-./query_image.sh &
-./query_volume.sh &
+do_queries
 echo_date
