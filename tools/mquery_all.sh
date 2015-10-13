@@ -8,8 +8,6 @@ echo_date () {
 
 run_until () {
     while kill -0 $pid 2> /dev/null; do
-        # Do stuff
-        ...
         sleep 1s
     done
 }
