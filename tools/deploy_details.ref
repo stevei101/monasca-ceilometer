@@ -1,7 +1,7 @@
 ceilosca:
 [home folder]
 sudo apt-get update; sudo apt-get install git
-git clone -b influx https://github.com/stevei101/monasca-ceilometer.git
+git clone -b paraflux https://github.com/stevei101/monasca-ceilometer.git
 cd ~/monasca-ceilometer
 deployer/ceilosca.sh 
 
@@ -16,7 +16,7 @@ source sim/bin/activate
 ceilometer:
 [home folder]
 sudo apt-get update; sudo apt-get install git mongodb
-git clone -b influx https://github.com/stevei101/monasca-ceilometer.git
+git clone -b paraflux https://github.com/stevei101/monasca-ceilometer.git
 git clone -b workers https://github.com/stevei101/devstack.git
 cp ~/monasca-ceilometer/deployer/devstack/ceilometer_local.conf ~/devstack/local.conf
 cd ~/devstack
