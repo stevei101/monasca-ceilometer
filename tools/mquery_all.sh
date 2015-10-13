@@ -15,7 +15,7 @@ run_until () {
 }
 
 private_cloud() {
-    /bin/bash query_instance.sh &
+    /bin/bash tquery_instance.sh &
     pid=$!
 }
 
