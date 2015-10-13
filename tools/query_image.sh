@@ -6,6 +6,7 @@ for t in {1..5}
 do
     tenant_id="00${t}_tenant_abcdefgh"
     echo $tenant_id
+    echo "image"
     # run q 10x
     for r in {1..10}
     do
