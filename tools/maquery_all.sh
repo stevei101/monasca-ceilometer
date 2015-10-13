@@ -9,9 +9,3 @@ private_cloud() {
 }
 
 private_cloud
-pid=$!
-
-# If this script is killed, kill the `cp'.
-trap "kill $pid 2> /dev/null" EXIT
-
-trap - EXIT
