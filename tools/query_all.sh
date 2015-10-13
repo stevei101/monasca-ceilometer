@@ -1,18 +1,7 @@
 #!/bin/bash
 
-echo_date () {
-    echo $(date)
-}
+# all queries
 
-# all query
-
-do_queries () {
-    ./query_instance.sh &
-    ./query_image.sh &
-    ./query_volume.sh &
-}
-
-
-echo_date
-do_queries
-echo_date
+./query_instance.sh &
+./query_image.sh &
+./query_volume.sh &
