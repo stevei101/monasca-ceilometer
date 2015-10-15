@@ -1,88 +1,125 @@
-monasca-ceilometer
+ceilosca message simulator
 ========
 
-Python plugin and storage driver for Ceilometer to send samples to monasca-api
+This is a message generator simulator cloned from oslo.messaging
 
-### Installation Instructions
+# Installation Instructions
 
-Assumes that an active monasca-api server is running.
+1.  Create a virtual environment where to run the simulator.
 
-1.  Run devstack to get openstack installed.
+     ```
+     virtualenv simulator
+     ```
 
-2.  Install python-monascaclient
+2.  Activate the virtual environment.
 
-      pip install python-monascaclient
+     ```
+     source simulator/bin/activate
+     ```
 
-3.  Clone monasca-ceilometer from github.com.
+3.  Install oslo.message
 
-      Copy the following files from *ceilosca/ceilometer* to devstack's ceilometer location typically at /opt/stack/ceilometer
+     ```
+     pip install oslo.messaging
+     ```
 
-        monasca_client.py
-        storage/impl_monasca.py
-        tests/api/v2/test_api_with_monasca_driver.py
-        tests/storage/test_impl_monasca.py
-        tests/test_monascaclient.py
-        tests/publisher/test_monasca_publisher.py
-        tests/publisher/test_monasca_data_filter.py
-        publisher/monasca_data_filter.py
-        publisher/monclient.py
+4.  Run the simulator
 
-4.  Edit entry_points.txt
+    ```
+    python ceilosca-message-simulator.py --url rabbit://stackrabbit:password@localhost notify-client -m 1 -s nova -a create -x tenant_id -r resource_id -d load_date
+    ```
 
-      Under [ceilometer.publisher] section add the following line:
+Note: The simulator has three main parameters:
 
-        monasca = ceilometer.publisher.monclient:MonascaPublisher
+-m number of message to be published
 
-      Under [ceilometer.metering.storage] section add the following line:
+-s service. Currently nova, cinder and glance are supported.
 
-        monasca = ceilometer.storage.impl_monasca:Connection
+-a action. Currently create and delete are supported.
 
-5.  Edit setup.cfg (used at the time of installation)
+-x tenant. Defines the tenant_id you want to use to assign the load.
 
-      Under 'ceilometer.publisher =' section add the following line:
+-r resource. Defines the resource_id you want to use to assign the load
 
-      monasca = ceilometer.publisher.monclient:MonascaPublisher
+-d load_date. Defines the load date so then you can create load for a specific date.
 
-      Under 'ceilometer.metering.storage =' section add the following line
+# Testing in a DevStack constrained environment with high load
 
-      monasca = ceilometer.storage.impl_monasca:Connection
+Testing the system in a devstack environment is challenging when you want to go above
+millions of messages. For this reason we came up with a set of steps that simplify
+and allow stretching the envelope to achieve the required load.
 
-6.  Configure /etc/ceilometer/pipeline.yaml to send the metrics to the monasca publisher.  Use the included pipeline.yaml file as an example.
+The Public and Private simulation scripts are generating 7.5M. In order to successfully
+load the devstack with these amounts these are the recommended steps.
 
-7.  Configure /etc/ceilometer/ceilometer.conf for setting up storage driver for ceilometer API. Use the included ceilometer.conf file as an example.
+Memory change for monasca-api, monasca-persister, and remove keystone auth for ceilometer-api:
 
-8.  Copy the included monasca_field_definitions.yml file to /etc/ceilometer.
+## Increase memory for the monasca-api
 
-    This file contains configuration how to treat each field in ceilometer sample object on per meter basis.
-    The monasca_data_filter.py uses this file and only stores the fields that are specified in this config file.
+```
+sudo vim /etc/init/monasca-api.conf
+```
 
-9.  Make sure the user specified under service_credentials in ceilometer.conf has *monasca_user role* added.
+Change:
 
-### Other info
+```
+exec /usr/bin/java -Dfile.encoding=UTF-8 –Xmx1g -cp /opt/monasca/monasca-api.jar:/opt/monasca/vertica/vertica_jdbc.jar monasca.api.MonApiApplication server /etc/monasca/api-config.yml
+```
 
-Since we don't have full repo of ceilometer, we setup the ceilometer repo in venv and copy monasca integration files in there,
-and run the unit tests over that code. At present this is tested against ceilometer stable/kilo branch, if you need to test
-against different branch you can change it in test-requirements.txt
+To:
 
-Relevant files are:
-monasca_test_setup.py - determines the ceilometer venv path and copies the relevant files over
-tox.ini - calls the commands for setup and runs the tests
-test-requirements.txt - contains the dependencies required for testing
+```
+exec /usr/bin/java -Dfile.encoding=UTF-8 -Xmx4g -cp /opt/monasca/monasca-api.jar:/opt/monasca/vertica/vertica_jdbc.jar monasca.api.MonApiApplication server /etc/monasca/api-config.yml
+```
 
-# License
+Then re-start the Monasca API service
 
-Copyright (c) 2015 Hewlett-Packard Development Company, L.P.
+```
+sudo service monasca-api restart
+```
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+## Increase memory for the monasca-persister
 
-    http://www.apache.org/licenses/LICENSE-2.0
+```
+sudo vim /etc/init/monasca-persister.conf
+```
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Change:
 
+```
+exec /usr/bin/java -Dfile.encoding=UTF-8 –Xmx1g -cp /opt/monasca/monasca-persister.jar:/opt/monasca/vertica/vertica_jdbc.jar monasca.persister.PersisterApplication server /etc/monasca/persister-config.yml
+```
+
+To:
+
+```
+exec /usr/bin/java -Dfile.encoding=UTF-8 -Xmx4g -cp /opt/monasca/monasca-persister.jar:/opt/monasca/vertica/vertica_jdbc.jar monasca.persister.PersisterApplication server /etc/monasca/persister-config.yml
+```
+
+Then re-start the Monasca Persister service.
+
+```
+sudo service monasca-persister restart
+```
+
+## Remove ceilometer-api auth
+
+```
+sudo vim /etc/ceilometer/api_paste.ini
+```
+
+Change:
+
+```
+[pipeline:main]
+pipeline = request_id authtoken api-server
+```
+
+To:
+
+```
+[pipeline:main]
+pipeline = request_id api-server
+```
+
+Then re-start the Ceilometer API.
