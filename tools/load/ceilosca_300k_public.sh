@@ -20,7 +20,7 @@ public_cloud() {
        fi
        for t in {1..500}
        do
-             tenant_id="00${t}_tenant_abcdefgh"
+             tenant_id="${t}00_tenant_abcdefgh"
              if [ $(($t % 2)) -eq 0 ]; then
                   resource_id="nova_resource_t_${t}"
                   python ceilosca-message-simulator.py --url rabbit://stackrabbit:password@localhost/ notify-client -m 20 -s nova -a create -x $tenant_id -r $resource_id -d $date
