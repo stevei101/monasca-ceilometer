@@ -104,3 +104,7 @@ nohup /usr/bin/python /usr/local/bin/ceilometer-api -d -v --log-dir=/var/log/cei
 curl -X GET -H "Content-Type: application/json" -d '{"q": [{"field": "project", "op": "eq", "value": "abcde12345"}]}' http://localhost:8777/v2/meters/volume
 
 curl -X GET -H "Content-Type: application/json" -d '{"q": [{"field": "project", "op": "eq", "value": "abcde12345"}]}' http://localhost:8777/v2/meters/volume?limit=10
+
+# remove influx series
+/opt/influxdb/influx
+DROP SERIES FROM /volume.*/
