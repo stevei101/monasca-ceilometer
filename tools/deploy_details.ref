@@ -2,12 +2,15 @@ ceilosca:
 [home folder]
 sudo apt-get update; sudo apt-get install git
 git clone -b paraflux https://github.com/stevei101/monasca-ceilometer.git
+git clone https://github.com/stackforge/monasca-ceilometer.git
 cd ~/monasca-ceilometer
 deployer/ceilosca.sh 
 
  - increase memory for mon api, persister
  - check to be sure the influxdb >= 9.4.1
 
+# check if monasca-api is working
+tail -f /var/log/monasca/api/monasca-api.log
 cd ~/monasca-ceilometer/tools
 ../sim_venv.sh
 source sim/bin/activate
