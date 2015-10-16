@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-export MONASCA_VAGRANT_REPO=https://github.com/stackforge/monasca-vagrant
+export MONASCA_VAGRANT_REPO=https://github.com/stackforge/monasca-vagrant.git
 export DEVSTACK_REPO=https://github.com/openstack-dev/devstack.git
 
 export BASE_DIR=~
@@ -45,10 +45,10 @@ install_ansible()
 
 get_monasca_files()
 {
-        git clone $MONASCA_VAGRANT_REPO $WORK_DIR || true
-        pushd $WORK_DIR
-        ansible-galaxy install -r requirements.yml -p ./roles --ignore-errors
-        popd
+        git clone -b money $MONASCA_VAGRANT_REPO $WORK_DIR || true
+        # pushd $WORK_DIR
+        # ansible-galaxy install -r requirements.yml -p ./roles --ignore-errors
+        # popd
 }
 
 disable_monasca_ui_role()
@@ -100,7 +100,7 @@ clear_env
 setup_devstack
 install_ansible
 get_monasca_files
-revert_monasca_api
+# revert_monasca_api
 disable_monasca_ui_role
 disable_monasca_events_installation
 add_to_etc_hosts
