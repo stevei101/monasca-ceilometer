@@ -46,9 +46,9 @@ install_ansible()
 get_monasca_files()
 {
         git clone -b money $MONASCA_VAGRANT_REPO $WORK_DIR || true
-        pushd $WORK_DIR
-        ansible-galaxy install -r requirements.yml -p ./roles --ignore-errors
-        popd
+        # pushd $WORK_DIR
+        # ansible-galaxy install -r requirements.yml -p ./roles --ignore-errors
+        # popd
 }
 
 disable_monasca_ui_role()
