@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-export MONASCA_VAGRANT_REPO=https://github.com/stackforge/monasca-vagrant
+export MONASCA_VAGRANT_REPO=https://github.com/stevei101/monasca-vagrant.git
 export DEVSTACK_REPO=https://github.com/openstack-dev/devstack.git
 
 export BASE_DIR=~
@@ -45,7 +45,7 @@ install_ansible()
 
 get_monasca_files()
 {
-        git clone $MONASCA_VAGRANT_REPO $WORK_DIR || true
+        git clone -b money $MONASCA_VAGRANT_REPO $WORK_DIR || true
         pushd $WORK_DIR
         ansible-galaxy install -r requirements.yml -p ./roles --ignore-errors
         popd
