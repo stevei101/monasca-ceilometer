@@ -1,11 +1,13 @@
 ceilosca:
 [home folder]
 sudo apt-get update; sudo apt-get install git
-git clone -b money https://github.com/stevei101/monasca-ceilometer.git
+git clone https://github.com/stackforge/monasca-ceilometer.git
 cd ~/monasca-ceilometer
 deployer/ceilosca.sh 
 
  - increase memory for mon api, persister
+ - remove the limit for monasca-api batch
+ - remove keystone from ceilometer-api for curl
 
 # check if monasca-api is working
 tail -f /var/log/monasca/api/monasca-api.log
@@ -18,7 +20,7 @@ source sim/bin/activate
 ceilometer:
 [home folder]
 sudo apt-get update; sudo apt-get install git mongodb
-git clone -b paraflux https://github.com/stevei101/monasca-ceilometer.git
+git clone -b money https://github.com/stevei101/monasca-ceilometer.git
 git clone -b workers https://github.com/stevei101/devstack.git
 cp ~/monasca-ceilometer/deployer/devstack/ceilometer_local.conf ~/devstack/local.conf
 cd ~/devstack
