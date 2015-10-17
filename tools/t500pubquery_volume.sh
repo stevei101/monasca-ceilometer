@@ -2,7 +2,7 @@
 
 # query volume
 
-for t in {1..5}
+for t in {1..500}
 do
     tenant_id="${t}00_tenant_abcdefgh"
     echo $tenant_id
