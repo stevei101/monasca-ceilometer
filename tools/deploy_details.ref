@@ -1,0 +1,40 @@
+ceilosca:
+[home folder]
+sudo apt-get update; sudo apt-get install -y git
+# git clone https://github.com/stackforge/monasca-ceilometer.git
+# git clone https://github.com/openstack/monasca-ceilometer.git
+git clone -b nullvalueneutron https://github.com/stevei101/monasca-ceilometer.git
+cd ~/monasca-ceilometer
+deployer/ceilosca.sh 
+
+ - increase memory for mon api, persister
+ - remove the limit for monasca-api batch
+ - remove keystone from ceilometer-api for curl
+
+# check if monasca-api is working
+tail -f /var/log/monasca/api/monasca-api.log
+cd ~/monasca-ceilometer/tools
+../sim_venv.sh
+source sim/bin/activate
+ - in the (sim) venv run script as: nohup ./script.sh > script.out 2>&1 &
+
+# NOTE: need to add creds to admin user:
+keystone user-role-add --user admin --role admin --tenant mini-mon
+
+ceilometer:
+[home folder]
+sudo apt-get update; sudo apt-get install -y git mongodb
+git clone -b money https://github.com/stevei101/monasca-ceilometer.git
+git clone -b workers https://github.com/stevei101/devstack.git
+cp ~/monasca-ceilometer/deployer/devstack/ceilometer_local.conf ~/devstack/local.conf
+
+# or
+git clone -b master https://github.com/openstack-dev/devstack.git
+# make a local.conf in devstack/
+cd ~/devstack
+./stack.sh
+
+cd ~/monasca-ceilometer/tools
+../sim_venv.sh
+source sim/bin/activate
+ - in the (sim) venv run script as: nohup ./script.sh > script.out 2>&1 &
