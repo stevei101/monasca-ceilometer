@@ -46,6 +46,9 @@ setup_devstack()
         pushd $DEVSTACK_DIR
         ./unstack.sh || true
         ./stack.sh
+        sudo -H pip install python-monascaclient
+        ./unstack.sh || true
+        ./stack.sh
         popd
 }
 
