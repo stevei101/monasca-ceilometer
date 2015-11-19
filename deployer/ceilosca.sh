@@ -24,83 +24,83 @@ export CEILOSCA_CONF_FILES='pipeline.yaml monasca_field_definitions.yaml';
 
 clear_env()
 {
-        unset OS_USERNAME OS_PASSWORD OS_PROJECT_NAME OS_AUTH_URL
+    unset OS_USERNAME OS_PASSWORD OS_PROJECT_NAME OS_AUTH_URL
 }
 
 download_ceilometer()
 {
-       if [ ! -d $DEVSTACK_DEST ]; then
-           sudo mkdir -p $DEVSTACK_DEST
-           sudo chown $CEILOSCA_USER $DEVSTACK_DEST
-       fi
+    if [ ! -d $DEVSTACK_DEST ]; then
+        sudo mkdir -p $DEVSTACK_DEST
+        sudo chown $CEILOSCA_USER $DEVSTACK_DEST
+    fi
 
-       git clone -b $PREFERRED_BRANCH $CEILOMETER_REPO $CEILOMETER_DEST || true
-       cp deployer/devstack/settings $CEILOMETER_DEST/devstack
-       cp deployer/devstack/plugin.sh $CEILOMETER_DEST/devstack
+    git clone -b $PREFERRED_BRANCH $CEILOMETER_REPO $CEILOMETER_DEST || true
+    cp deployer/devstack/settings $CEILOMETER_DEST/devstack
+    cp deployer/devstack/plugin.sh $CEILOMETER_DEST/devstack
 }
 
 setup_devstack()
 {
-        git clone -b $PREFERRED_BRANCH $DEVSTACK_REPO $DEVSTACK_DIR || true
-        cp deployer/devstack/local.conf $DEVSTACK_DIR
-        pushd $DEVSTACK_DIR
-        ./unstack.sh || true
-        ./stack.sh
-        popd
+    git clone -b $PREFERRED_BRANCH $DEVSTACK_REPO $DEVSTACK_DIR || true
+    cp deployer/devstack/local.conf $DEVSTACK_DIR
+    pushd $DEVSTACK_DIR
+    ./unstack.sh || true
+    ./stack.sh
+    popd
 }
 
 install_ansible()
 {
-	      sudo apt-get install software-properties-common
-	      sudo apt-add-repository -y ppa:ansible/ansible
-	      sudo apt-get update
-	      sudo apt-get -y install ansible
+    sudo apt-get install -y software-properties-common
+    sudo apt-add-repository -y ppa:ansible/ansible
+    sudo apt-get update
+    sudo apt-get -y install ansible
 }
 
 get_monasca_files()
 {
-	      git clone $MONASCA_VAGRANT_REPO $WORK_DIR || true
-        pushd $WORK_DIR
-        ansible-galaxy install -r requirements.yml -p ./roles --ignore-errors
-        popd
+    git clone $MONASCA_VAGRANT_REPO $WORK_DIR || true
+    pushd $WORK_DIR
+    ansible-galaxy install -r requirements.yml -p ./roles --ignore-errors
+    popd
 }
 
 disable_monasca_ui_role()
 {
-        if [ -f $WORK_DIR/roles/monasca-ui/tasks/main.yml ]; then
-            rm $WORK_DIR/roles/monasca-ui/tasks/main.yml
-            file_list=$(find $WORK_DIR/roles -type f -exec grep -l get_url: {} +)
-            for filename in $file_list; do
-                sed -i.bak 's/ timeout=[0-9]\+//' $filename
-                sed -i '/get_url:/s/$/ timeout=600/' $filename
-            done
-        fi
+    if [ -f $WORK_DIR/roles/monasca-ui/tasks/main.yml ]; then
+        rm $WORK_DIR/roles/monasca-ui/tasks/main.yml
+        file_list=$(find $WORK_DIR/roles -type f -exec grep -l get_url: {} +)
+        for filename in $file_list; do
+            sed -i.bak 's/ timeout=[0-9]\+//' $filename
+            sed -i '/get_url:/s/$/ timeout=1200/' $filename
+        done
+    fi
 
 }
 
 disable_monasca_events_installation()
 {
-        sed -i "s/- include: events.yml/#- include: events.yml/" $WORK_DIR/mini-mon.yml
+    sed -i "s/- include: events.yml/#- include: events.yml/" $WORK_DIR/mini-mon.yml
 }
 
 add_to_etc_hosts()
 {
-        if ! grep -q "$TARGET_IP devstack mini-mon" /etc/hosts; then
-            sudo bash -c "echo $TARGET_IP devstack mini-mon >> /etc/hosts"
-        fi
+    if ! grep -q "$TARGET_IP devstack mini-mon" /etc/hosts; then
+        sudo bash -c "echo $TARGET_IP devstack mini-mon >> /etc/hosts"
+    fi
 }
 
 add_monasca_ips_to_local_net_if()
 {
-        sudo ip addr add $DEVSTACK_IP/24 dev $NETWORK_IF || true
-        sudo ip addr add $MINIMON_IP/24 dev $NETWORK_IF || true
+    sudo ip addr add $DEVSTACK_IP/24 dev $NETWORK_IF || true
+    sudo ip addr add $MINIMON_IP/24 dev $NETWORK_IF || true
 }
 
 run_ceilosca()
 {
-        cd $WORK_DIR
-        ansible-playbook -u $CEILOSCA_USER -c local -k -i "devstack,"  devstack.yml
-        ansible-playbook -u $CEILOSCA_USER -c local -k -i "mini-mon,"  mini-mon.yml -e 'database_type=influxdb' -e 'influxdb_version=0.9.4.2'
+    cd $WORK_DIR
+    ansible-playbook -u $CEILOSCA_USER -c local -k -i "devstack,"  devstack.yml
+    ansible-playbook -u $CEILOSCA_USER -c local -k -i "mini-mon,"  mini-mon.yml -e 'database_type=influxdb' -e 'influxdb_version=0.9.4.2'
 }
 
 clear_env
