@@ -16,6 +16,7 @@ metadata:
     instance:
         - state
         - state_description
+        - hostname
     image:
         - size
         - status

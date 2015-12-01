@@ -42,7 +42,7 @@ class TestMonUtils(base.BaseTestCase):
                 'image.size': ['size', 'status'],
                 'image.update': ['size', 'status'],
                 'image.upload': ['size', 'status'],
-                'instance': ['state', 'state_description'],
+                'instance': ['state', 'state_description', 'hostname'],
                 'snapshot': ['status'],
                 'snapshot.size': ['status'],
                 'volume': ['status'],
