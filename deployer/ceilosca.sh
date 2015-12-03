@@ -58,7 +58,7 @@ disable_monasca_ui_role()
             file_list=$(find $WORK_DIR/roles -type f -exec grep -l get_url: {} +)
             for filename in $file_list; do
                 sed -i.bak 's/ timeout=[0-9]\+//' $filename
-                sed -i '/get_url:/s/$/ timeout=600/' $filename
+                sed -i '/get_url:/s/$/ timeout=1200/' $filename
             done
         fi
 
